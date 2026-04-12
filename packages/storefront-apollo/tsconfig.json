@@ -1,0 +1,11 @@
+{
+  // tsconfig.json — root TypeScript project for the storefront.
+  // Uses project references to split app code and build-tool code into separate
+  // compiler contexts. This enables `tsc -b` incremental builds and ensures Vite
+  // config files aren't included in the main app compilation.
+  "files": [],   // No files compiled directly from this root — delegation only.
+  "references": [
+    { "path": "./tsconfig.app.json" },    // React app source (src/)
+    { "path": "./tsconfig.node.json" }    // Node.js build tools (vite.config.ts, codegen.ts)
+  ]
+}

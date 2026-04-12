@@ -1,0 +1,12 @@
+{
+  "name": "apollo-client-poc",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:storefront": "pnpm --filter storefront-apollo dev",
+    "build:storefront": "pnpm --filter storefront-apollo build",
+    "codegen": "pnpm --filter storefront-apollo codegen"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  // tsconfig.json — TypeScript compiler settings for the Vendure backend.
+  // The backend is a CommonJS Node.js app so we target ES2020 with CJS modules
+  // instead of ESNext/ESM used by the storefront.
+  "compilerOptions": {
+    // CommonJS output for Node.js compatibility (Vendure plugins rely on require()).
+    "module": "commonjs",
+    // Emit modern JS while keeping Node 16+ compatibility.
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    // Vendure decorators (@Entity, @Column, etc.) require the legacy decorator spec.
+    // These two flags must be enabled together.
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    // Allows `import config from './config.json'` without extra type assertions.
+    "resolveJsonModule": true,
+    // Relaxed strictness — Vendure's own types are permissive enough that full strict
+    // mode generates many false-positive errors in plugin code.
+    "strict": false,
+    // Lets `import x from 'y'` work for CommonJS modules that use module.exports.
+    "esModuleInterop": true,
+    // Compiled JS goes into dist/ — mirrored from src/.
+    "outDir": "dist",
+    "rootDir": "src",
+    // Skip type-checking declaration files in node_modules for faster builds.
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

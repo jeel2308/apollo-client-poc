@@ -1,0 +1,30 @@
+{
+  // tsconfig.node.json — compiler settings for Node.js build-tool scripts.
+  // Referenced by tsconfig.json alongside tsconfig.app.json.
+  // Covers vite.config.ts and codegen.ts, which run in Node rather than the browser.
+  "compilerOptions": {
+    // Incremental build cache for build-tool files.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    // Target modern Node.js — no need to support old runtimes for build scripts.
+    "target": "ES2022",
+    // ES2023 lib gives access to Array.findLast, etc., useful in build scripts.
+    "lib": ["ES2023"],
+    // ESNext modules let ts-node and Vite resolve imports natively.
+    "module": "ESNext",
+    // Skip type-checking declaration files in node_modules.
+    "skipLibCheck": true,
+    // 'bundler' resolution to match Vite's module resolution for config files.
+    "moduleResolution": "bundler",
+    // Allow explicit .ts extensions in imports within build-tool files.
+    "allowImportingTsExtensions": true,
+    // Each file type-checked in isolation — consistent with the app tsconfig.
+    "isolatedModules": true,
+    // Treat every file as a module.
+    "moduleDetection": "force",
+    // No JS emit — these files are consumed directly by Vite/ts-node at runtime.
+    "noEmit": true,
+    "strict": true
+  },
+  // Only include the two build-tool entry points; keeps app source out of this context.
+  "include": ["vite.config.ts", "codegen.ts"]
+}

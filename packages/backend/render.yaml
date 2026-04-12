@@ -1,0 +1,68 @@
+# render.yaml — Render.com infrastructure-as-code (Blueprint spec).
+# Commit this file and connect the repo in the Render dashboard to deploy automatically.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+    # Web service: runs the compiled Vendure Node.js server.
+  - type: web
+    name: vendure-backend
+    env: node
+    plan: starter           # Upgrade to 'standard' or higher for production traffic.
+    buildCommand: pnpm install && pnpm build   # Compiles TypeScript → dist/
+    startCommand: node dist/index.js
+
+    envVars:
+        # Tells the app it is running in a Render production environment.
+      - key: APP_ENV
+        value: production
+
+        # Vendure defaults to port 10000 on Render; set explicitly to keep the app consistent.
+      - key: PORT
+        value: 3000
+
+        # Switch to Postgres for production (SQLite is not supported on Render's ephemeral filesystem).
+      - key: DB_TYPE
+        value: postgres
+
+        # The four DB_* vars are auto-populated from the managed Postgres database below.
+      - key: DB_HOST
+        fromDatabase:
+          name: vendure-db
+          property: host
+
+      - key: DB_PORT
+        fromDatabase:
+          name: vendure-db
+          property: port
+
+      - key: DB_NAME
+        fromDatabase:
+          name: vendure-db
+          property: database
+
+      - key: DB_USERNAME
+        fromDatabase:
+          name: vendure-db
+          property: user
+
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: vendure-db
+          property: password
+
+        # Render generates a random value on first deploy and stores it as a secret.
+      - key: COOKIE_SECRET
+        generateValue: true
+
+      - key: SUPERADMIN_USERNAME
+        value: superadmin
+
+        # Generated on first deploy — retrieve from the Render dashboard or environment tab.
+      - key: SUPERADMIN_PASSWORD
+        generateValue: true
+
+# Managed Postgres database provisioned alongside the web service.
+databases:
+  - name: vendure-db
+    databaseName: vendure
+    plan: starter           # Upgrade to 'standard' for production workloads.

@@ -1,0 +1,50 @@
+{
+  // tsconfig.app.json — compiler settings for the React storefront source (src/).
+  // Referenced by tsconfig.json; only this config is used when type-checking app code.
+  "compilerOptions": {
+    // Incremental build cache — speeds up repeated `tsc -b` calls.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    // Emit modern JS; Vite's bundler handles transpilation for older browsers.
+    "target": "ES2020",
+    // Required for React class fields to behave as the spec dictates.
+    "useDefineForClassFields": true,
+    // Include browser globals (window, document, etc.) alongside ES2020 built-ins.
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    // ESNext modules let Vite tree-shake and code-split properly.
+    "module": "ESNext",
+    // Skip type-checking third-party .d.ts files — avoids noise from imperfect upstream types.
+    "skipLibCheck": true,
+    // 'bundler' resolution matches Vite's module resolution algorithm (supports bare imports, etc.).
+    "moduleResolution": "bundler",
+    // Allows importing .ts/.tsx files with explicit extensions inside the project.
+    "allowImportingTsExtensions": true,
+    // Each file is type-checked independently — required for Vite's per-file transform.
+    "isolatedModules": true,
+    // Treat every file as a module even without an import/export — prevents global scope collisions.
+    "moduleDetection": "force",
+    // tsc is used only for type-checking; Vite handles the actual emit.
+    "noEmit": true,
+    // Use the automatic JSX runtime (React 17+) — no need to import React in every file.
+    "jsx": "react-jsx",
+    "strict": true,
+    // noImplicitAny is overridden to false until `pnpm codegen` runs.
+    // Once the Vendure schema generates real types in src/gql/, remove this line —
+    // all useQuery/useMutation return types will be properly inferred and
+    // .map() callbacks will have contextual types without needing explicit annotations.
+    "noImplicitAny": false,
+    // Allow unused locals/params during active development; tighten before shipping.
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    // Catch accidental fall-through in switch statements.
+    "noFallthroughCasesInSwitch": true,
+    // Enables the '@/*' path alias defined below.
+    "baseUrl": ".",
+    "paths": {
+      // '@/foo' resolves to 'src/foo' — avoids brittle relative import chains.
+      "@/*": ["src/*"]
+    },
+    // Pull in Vite's client-side type augmentations (import.meta.env, etc.).
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}

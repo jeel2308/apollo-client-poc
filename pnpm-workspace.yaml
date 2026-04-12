@@ -1,0 +1,6 @@
+# pnpm-workspace.yaml
+# Declares this repo as a pnpm monorepo.
+# Every directory directly under packages/ is treated as an independent workspace
+# package and can be referenced by name in --filter flags (e.g. pnpm --filter backend dev).
+packages:
+  - 'packages/*'

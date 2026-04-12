@@ -1,0 +1,24 @@
+# netlify.toml — Netlify deployment configuration for the Apollo storefront.
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Run from the storefront package root (Netlify is pointed at packages/storefront-apollo).
+  command = "pnpm build"   # tsc -b && vite build
+  publish = "dist"         # Vite output directory served as the static site.
+
+[build.environment]
+  # Pin runtimes to match local development versions.
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+
+# SPA redirect: forward every route to index.html so React Router can handle it
+# client-side. Status 200 (rewrite) keeps the original URL in the browser bar.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Production-only environment variables.
+# Set VITE_VENDURE_SHOP_API_URL to your deployed Render (or other) backend URL.
+[context.production.environment]
+  VITE_VENDURE_SHOP_API_URL = "https://your-vendure-backend.onrender.com/shop-api"

@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "ts-node src/seed.ts",
+    "extend-seed": "ts-node src/extend-seed.ts",
+    "assign-images": "ts-node src/assign-images.ts",
+    "fill-to-200": "ts-node src/fill-to-200.ts"
+  },
+  "dependencies": {
+    "@vendure/admin-ui-plugin": "^3.3.0",
+    "@vendure/asset-server-plugin": "^3.3.0",
+    "@vendure/core": "^3.3.0",
+    "@vendure/email-plugin": "^3.3.0",
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.4.1",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.12.7"
+  }
+}
