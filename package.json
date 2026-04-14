@@ -6,7 +6,11 @@
   "scripts": {
     "dev:backend": "pnpm --filter backend dev",
     "dev:storefront": "pnpm --filter storefront-apollo dev",
+    "dev:relay": "pnpm --filter storefront-relay dev",
     "build:storefront": "pnpm --filter storefront-apollo build",
-    "codegen": "pnpm --filter storefront-apollo codegen"
+    "build:relay": "pnpm --filter storefront-relay build",
+    "codegen": "pnpm --filter storefront-apollo codegen",
+    "relay": "pnpm --filter storefront-relay relay",
+    "fetch-schema": "pnpm --filter storefront-relay fetch-schema"
   }
 }

@@ -8,7 +8,8 @@ A full e-commerce storefront built with **Vendure** (GraphQL backend) and **Apol
 apollo-client-poc/
 ├── packages/
 │   ├── backend/            # Vendure — Node.js GraphQL server
-│   └── storefront-apollo/  # React 19 + Apollo Client v4
+│   ├── storefront-apollo/  # React 19 + Apollo Client v4
+│   └── storefront-relay/   # React 19 + Relay — same UI, different data layer
 ```
 
 ---
@@ -60,7 +61,7 @@ After seeding, **restart the backend** so the search index picks up all new prod
 pnpm dev:backend
 ```
 
-### 4. Start the storefront
+### 4. Start the Apollo storefront
 
 ```bash
 cd packages/storefront-apollo
@@ -68,7 +69,24 @@ cp .env.example .env   # set VITE_VENDURE_SHOP_API_URL if needed (defaults to lo
 pnpm dev
 ```
 
-Storefront at `http://localhost:5173`
+Apollo storefront at `http://localhost:5173`
+
+### 5. Start the Relay storefront
+
+```bash
+cd packages/storefront-relay
+cp .env.example .env
+
+# Download the schema (backend must be running)
+pnpm fetch-schema
+
+# Compile Relay fragments into __generated__ directories
+pnpm relay
+
+pnpm dev
+```
+
+Relay storefront at `http://localhost:5174` (Vite assigns the next free port)
 
 ---
 

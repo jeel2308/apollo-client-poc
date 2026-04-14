@@ -1,0 +1,12 @@
+{
+  "src": "./src",
+  "language": "typescript",
+  "schema": "./schema.graphql.json",
+  "artifactDirectory": "./src/__generated__",
+  "eagerEsModules": true,
+  "customScalars": {
+    "DateTime": "string",
+    "JSON": "Record<string, unknown>",
+    "Upload": "File"
+  }
+}
