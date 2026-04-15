@@ -1,9 +1,8 @@
 import { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { HomePage } from '@/pages/HomePage';
 import { CollectionPage } from '@/pages/CollectionPage';
-import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { SearchPage } from '@/pages/SearchPage';
 import { CartPage } from '@/pages/CartPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
@@ -169,13 +168,32 @@ function OrderDetailSkeleton() {
   );
 }
 
+// Wrappers that read the URL slug and pass it as `key` so React fully unmounts
+// and remounts the page component on every collection/product change.
+// Without this, React Router reuses the same component instance across slugs —
+// local state (e.g. `take`) carries over and Relay's previous query subscriptions
+// can bleed through before new data arrives, showing the wrong collection's products.
+function KeyedCollectionPage() {
+  const { slug } = useParams<{ slug: string }>();
+  return <CollectionPage key={slug} />;
+}
+
+function KeyedProductDetailPage() {
+  const { slug } = useParams<{ slug: string }>();
+  return (
+    <Suspense fallback={<ProductDetailSkeleton />} key={slug}>
+      <ProductDetailPage />
+    </Suspense>
+  );
+}
+
 export function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Suspense fallback={<HomePageSkeleton />}><HomePage /></Suspense>} />
-        <Route path="/collections/:slug" element={<CollectionPage />} />
-        <Route path="/products/:slug" element={<Suspense fallback={<ProductDetailSkeleton />}><ProductDetailPage /></Suspense>} />
+        <Route path="/collections/:slug" element={<KeyedCollectionPage />} />
+        <Route path="/products/:slug" element={<KeyedProductDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/cart" element={<Suspense fallback={<CartSkeleton />}><CartPage /></Suspense>} />
         <Route path="/checkout" element={<Suspense fallback={<TwoColumnFormSkeleton />}><CheckoutPage /></Suspense>} />
