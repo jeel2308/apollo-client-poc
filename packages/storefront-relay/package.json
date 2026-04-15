@@ -14,16 +14,17 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-relay": "^18.1.0",
-    "relay-runtime": "^18.1.0",
-    "react-router-dom": "^7.1.5"
+    "react-router-dom": "^7.1.5",
+    "relay-runtime": "^18.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "graphql": "^16.8.1",
     "relay-compiler": "^18.1.0",
-    "typescript": "^5.7.2",
     "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "vite-plugin-relay": "^2.1.0"
   }
