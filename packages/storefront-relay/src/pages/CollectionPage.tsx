@@ -6,8 +6,8 @@ import { ProductGrid, ProductGridSkeleton } from '@/components/product/ProductGr
 const PAGE_SIZE = 40;
 
 // Always-unfiltered query: collection info + full facet list for the sidebar.
-// fetchPolicy: 'network-only' ensures the sidebar always reflects server state
-// (equivalent to Apollo's fetchPolicy: 'no-cache').
+// store-or-network: serves from Relay store on revisit (instant), fetches from
+// network only on first load per slug.
 const CollectionFacetsQuery = graphql`
   query CollectionPageFacetsQuery($slug: String!) {
     collection(slug: $slug) {
@@ -71,7 +71,9 @@ function CollectionFacets({ slug, facetValueIds, onToggleFacet }: {
   const data = useLazyLoadQuery(
     CollectionFacetsQuery,
     { slug },
-    { fetchPolicy: 'network-only' },
+    // store-or-network: serve from store instantly on revisit, only fetch once per slug.
+    // network-only would re-suspend every time you navigate back to this collection.
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   const collection = data.collection;
@@ -157,7 +159,9 @@ function CollectionProducts({ slug, take, facetValueFilters, onLoadMore }: {
   const data = useLazyLoadQuery(
     CollectionProductsQuery,
     { slug, skip: 0, take, facetValueFilters },
-    { fetchPolicy: 'store-and-network' },
+    // store-or-network: avoids the double-render flash that store-and-network causes
+    // (showing stale data briefly then overwriting with fresh data from the network).
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   const items = data.search.items ?? [];
@@ -281,7 +285,10 @@ function FacetAwareProducts({ slug, facetValueIds, take, onLoadMore }: {
   const facetData = useLazyLoadQuery(
     FacetDataQuery,
     { slug },
-    { fetchPolicy: 'network-only' },
+    // store-or-network: CollectionFacets already fetched this data — hitting the store
+    // here avoids a second network round-trip and, crucially, avoids suspending twice
+    // when a filter changes (once for facets, once for products).
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   const facetValueFilters = buildFacetValueFilters(

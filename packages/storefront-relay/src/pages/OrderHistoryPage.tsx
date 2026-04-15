@@ -48,7 +48,7 @@ function OrderHistoryInner({ take, onLoadMore }: { take: number; onLoadMore: () 
   const data = useLazyLoadQuery(
     OrderHistoryQuery,
     { skip: 0, take },
-    { fetchPolicy: 'store-and-network' },
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   if (!data?.activeCustomer) {

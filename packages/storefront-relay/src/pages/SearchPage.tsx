@@ -53,7 +53,7 @@ function SearchFacets({ term, facetValueIds, onToggle }: {
   const data = useLazyLoadQuery(
     SearchFacetsQuery,
     { term: term || undefined },
-    { fetchPolicy: 'network-only' },
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   type FacetGroupMap = Record<string, { facetName: string; values: { id: string; name: string; count: number }[] }>;
@@ -106,7 +106,7 @@ function SearchProducts({ term, facetValueIds, take, facetValues, onLoadMore }: 
         facetValueFilters,
       },
     },
-    { fetchPolicy: 'store-and-network' },
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   const items = data.search.items ?? [];
@@ -143,7 +143,7 @@ function FacetDataBridge({ term, facetValueIds, take, onLoadMore }: {
   const data = useLazyLoadQuery(
     SearchFacetsQuery,
     { term: term || undefined },
-    { fetchPolicy: 'network-only' },
+    { fetchPolicy: 'store-or-network' },
   ) as any;
 
   return (

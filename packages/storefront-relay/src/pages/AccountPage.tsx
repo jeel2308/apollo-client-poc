@@ -1,4 +1,4 @@
-import { useState, useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { Link } from 'react-router-dom';
 
@@ -203,13 +203,13 @@ function AccountInner({ fetchKey }: { fetchKey: number }) {
 export function AccountPage() {
   const [fetchKey, setFetchKey] = useState(0);
 
-  // AccountInner fires window event 'account-refresh'; we listen and increment fetchKey.
-  // This is simpler than prop drilling a refetch callback through Relay's Suspense boundary.
-  useState(() => {
+  // AccountInner fires window event 'account-refresh'; we listen and increment fetchKey
+  // which causes AccountInner to re-query (via fetchKey prop → new useLazyLoadQuery call).
+  useEffect(() => {
     const handler = () => setFetchKey(k => k + 1);
     window.addEventListener('account-refresh', handler);
     return () => window.removeEventListener('account-refresh', handler);
-  });
+  }, []);
 
   return (
     <AccountInner fetchKey={fetchKey} />
