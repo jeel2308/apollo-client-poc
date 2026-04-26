@@ -16,7 +16,14 @@ const fetchFn: FetchFunction = async (request, variables) => {
   return res.json();
 };
 
+// Vendure uses per-table auto-increment IDs, so Collection:2 and Facet:2 are
+// different entities but collide in Relay's store (which keys records by `id`
+// alone). Prefixing with __typename gives each type its own namespace.
 export const relayEnvironment = new Environment({
   network: Network.create(fetchFn),
   store: new Store(new RecordSource()),
+  getDataID: (fieldValue: Record<string, unknown>, typeName: string) => {
+    if (fieldValue.id != null) return `${typeName}:${fieldValue.id}`;
+    return undefined;
+  },
 });
