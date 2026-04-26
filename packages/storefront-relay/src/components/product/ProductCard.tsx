@@ -14,6 +14,7 @@ export const ProductCardFragment = graphql`
     productName
     slug
     priceWithTax {
+      __typename
       ... on PriceRange {
         min
         max

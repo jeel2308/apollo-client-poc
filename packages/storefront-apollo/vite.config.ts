@@ -5,6 +5,7 @@ import path from 'path';
 // vite.config.ts — Vite build and dev-server configuration for the Apollo storefront.
 // Docs: https://vitejs.dev/config/
 export default defineConfig({
+  server: { port: 5174 },
   plugins: [
     // Enables React Fast Refresh in dev mode and the automatic JSX runtime for production builds.
     react(),
