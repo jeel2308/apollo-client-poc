@@ -9,7 +9,10 @@
     "seed": "ts-node src/seed.ts",
     "extend-seed": "ts-node src/extend-seed.ts",
     "assign-images": "ts-node src/assign-images.ts",
-    "fill-to-200": "ts-node src/fill-to-200.ts"
+    "fill-to-200": "ts-node src/fill-to-200.ts",
+    "fill-to-200:fast": "SKIP_WORKER=true ts-node src/fill-to-200.ts",
+    "reindex": "ts-node src/reindex.ts",
+    "apply-filters": "ts-node src/apply-filters.ts"
   },
   "dependencies": {
     "@vendure/admin-ui-plugin": "^3.3.0",
