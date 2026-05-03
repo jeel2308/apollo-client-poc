@@ -14,8 +14,8 @@
 import 'dotenv/config';
 
 const ADMIN_API = process.env.VENDURE_ADMIN_API_URL ?? 'http://localhost:3000/admin-api';
-const TARGET = 400;
-const CONCURRENCY = 10;
+const TARGET = 1600;
+const CONCURRENCY = 1;
 
 // ── Product name templates per collection slug ────────────────────────────────
 
@@ -44,15 +44,26 @@ const MATERIALS = ['Cotton', 'Polyester', 'Leather', 'Aluminum', 'Steel', 'Wood'
 
 // ── HTTP helpers ───────────────────────────────────────────────────────────────
 
-async function gql(token: string, query: string, variables?: Record<string, unknown>): Promise<any> {
-  const res = await fetch(ADMIN_API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-    body: JSON.stringify({ query, variables }),
-  });
-  const json = await res.json() as any;
-  if (json.errors) throw new Error(json.errors[0]?.message ?? JSON.stringify(json.errors));
-  return json.data;
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+async function gql(token: string, query: string, variables?: Record<string, unknown>, retries = 5): Promise<any> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(ADMIN_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ query, variables }),
+      });
+      const json = await res.json() as any;
+      if (json.errors) throw new Error(json.errors[0]?.message ?? JSON.stringify(json.errors));
+      return json.data;
+    } catch (err: any) {
+      if (attempt === retries) throw err;
+      const wait = 1000 * Math.pow(2, attempt); // 1s, 2s, 4s, 8s, 16s
+      console.error(`\n  [retry ${attempt + 1}/${retries}] ${err.message ?? err} — waiting ${wait}ms`);
+      await sleep(wait);
+    }
+  }
 }
 
 async function getAuthToken(): Promise<string> {
@@ -316,6 +327,7 @@ async function run() {
         else     { totalSkipped++; }
       }
       process.stdout.write(`\r  ${newIds.length + totalSkipped < need ? newIds.length + totalSkipped : need}/${need}`);
+      await sleep(200); // let the backend breathe between batches
     }
 
     // Merge existing + new IDs and assign collection filter
@@ -327,7 +339,16 @@ async function run() {
   console.log(`\n\nDone!`);
   console.log(`  Total created: ${totalCreated} products × 3 variants`);
   console.log(`  Total skipped: ${totalSkipped} (duplicate slugs)`);
-  console.log(`\nRestart the backend (or trigger a reindex) so search picks up new products.`);
+
+  if (process.env.SKIP_WORKER === 'true') {
+    console.log(`\nSKIP_WORKER mode: triggering full search reindex...`);
+    console.log(`(This requires the backend to be restarted with SKIP_WORKER unset first)`);
+    console.log(`Run: pnpm dev  then  pnpm reindex`);
+  } else {
+    console.log(`\nTriggering search reindex...`);
+    await gql(token, `mutation { reindex { id } }`);
+    console.log(`Reindex job queued — search will update as the worker processes it.`);
+  }
 }
 
 run().catch(err => {
